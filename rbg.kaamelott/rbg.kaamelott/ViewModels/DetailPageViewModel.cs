@@ -1,0 +1,63 @@
+﻿using Plugin.TextToSpeech;
+using Plugin.TextToSpeech.Abstractions;
+using rbg.kaamelott.Models;
+using System;
+using System.Collections.Generic;
+using System.Text;
+using System.Threading.Tasks;
+using Xamarin.Forms;
+
+namespace rbg.kaamelott.ViewModels
+{
+    public class DetailPageViewModel : BaseViewModel
+    {
+        #region Properties
+        private INavigation Navigation;
+
+        private Sample sample;
+        public Sample Sample
+        {
+            get { return sample; }
+            set { sample = value; }
+        }
+        #endregion
+
+        public DetailPageViewModel(INavigation navigation, Sample sample)
+        {
+            Navigation = navigation;
+
+            Title = "Détail d'un sample";
+
+            Sample = sample;
+
+            PlaySampleCommand = new Command(async () => await ExecutePlaySampleCommand());
+            TextToSpeechCommand = new Command(async () => await CrossTextToSpeech.Current.Speak(
+                Sample.Title, 
+                new CrossLocale{ Language="fr", Country="fr" }));
+        }
+
+        public Command PlaySampleCommand { get; set; }
+        private async Task ExecutePlaySampleCommand()
+        {
+            try
+            {
+                await Task.Factory.StartNew(() =>
+                {
+                    if (Sample != null)
+                    {
+                        var player = Plugin.SimpleAudioPlayer.CrossSimpleAudioPlayer.CreateSimpleAudioPlayer();
+                        var stream = Resources.Resources.GetSampleStreamFromResources(Sample.File);
+                        if (stream != null)
+                        {
+                            player.Load(stream);
+                            player.Play();
+                        }
+                    }
+                });
+            }
+            catch { }
+        }
+
+        public Command TextToSpeechCommand { get; set; }
+    }
+}
