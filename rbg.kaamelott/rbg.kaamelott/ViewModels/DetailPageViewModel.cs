@@ -76,7 +76,8 @@ namespace rbg.kaamelott.ViewModels
                     CrossShare.Current.Share(new ShareMessage
                     {
                         Title = "Ecoute ce sample de fou",
-                        Text = "Ce sample de Kaamelott est génial: " + Sample.Title
+                        Text = "Ce sample de Kaamelott est génial: " + Sample.Title,
+                        Url = "https://github.com/RBG74/xam.kaamelott"
                     });
                 });
             }
