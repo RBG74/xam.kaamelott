@@ -1,4 +1,6 @@
-﻿using Plugin.TextToSpeech;
+﻿using Plugin.Share;
+using Plugin.Share.Abstractions;
+using Plugin.TextToSpeech;
 using Plugin.TextToSpeech.Abstractions;
 using rbg.kaamelott.Models;
 using System;
@@ -34,6 +36,7 @@ namespace rbg.kaamelott.ViewModels
             TextToSpeechCommand = new Command(async () => await CrossTextToSpeech.Current.Speak(
                 Sample.Title, 
                 new CrossLocale{ Language="fr", Country="fr" }));
+            ShareCommand = new Command(async () => await ExecuteShareCommand());
         }
 
         public Command PlaySampleCommand { get; set; }
@@ -59,5 +62,25 @@ namespace rbg.kaamelott.ViewModels
         }
 
         public Command TextToSpeechCommand { get; set; }
+
+        public Command ShareCommand { get; set; }
+        private async Task ExecuteShareCommand()
+        {
+            try
+            {
+                await Task.Factory.StartNew(() =>
+                {
+                    if (!CrossShare.IsSupported)
+                        return;
+
+                    CrossShare.Current.Share(new ShareMessage
+                    {
+                        Title = "Ecoute ce sample de fou",
+                        Text = "Ce sample de Kaamelott est génial: " + Sample.Title
+                    });
+                });
+            }
+            catch { }
+        }
     }
 }

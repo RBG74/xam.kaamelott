@@ -22,6 +22,7 @@
                 HorizontalOptions="Center"/>
             <Button
                 Text="Share" 
+                Command="{Binding ShareCommand}"
                 HorizontalOptions="Center"/>
         </StackLayout>
     </ContentPage.Content>
